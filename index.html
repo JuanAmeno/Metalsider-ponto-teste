@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metalsider Betim - Terminal de Ponto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Desabilita o zoom ao clicar rápido no celular */
+        button, div {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="bg-[#09090b] text-[#f4f4f5] antialiased flex flex-col items-center justify-center min-h-screen p-4 md:p-8">
+
+    <div class="w-full max-w-sm bg-[#18181b] border border-[#27272a] rounded-2xl shadow-2xl overflow-hidden min-h-[640px] flex flex-col justify-between relative">
+        
+        <div id="screen-ready" class="flex-1 flex flex-col justify-between p-6">
+            
+            <header class="space-y-1">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xs font-bold tracking-wider text-[#a1a1aa] uppercase font-mono">METALSIDER BETIM</h1>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-800 text-zinc-400 border border-zinc-700 font-mono">
+                        TERM-04
+                    </span>
+                </div>
+                <div class="flex items-center justify-between text-[11px] font-mono text-[#71717a]">
+                    <span>STATUS: <span class="text-emerald-500 animate-pulse">● ONLINE</span></span>
+                    <span id="live-date">--/--/----</span>
+                </div>
+            </header>
+
+            <div class="flex-1 flex flex-col justify-center my-6 space-y-6">
+                
+                <div class="text-center space-y-1">
+                    <div id="live-clock" class="text-4xl font-light tracking-tight text-white font-mono">00:00:00</div>
+                    <p class="text-[10px] text-[#71717a] uppercase tracking-widest font-mono">Horário Oficial de Brasília</p>
+                </div>
+
+                <div class="relative flex items-center justify-center py-4">
+                    <div id="biometric-wrapper" class="w-28 h-28 rounded-full border border-zinc-800 bg-[#09090b] flex items-center justify-center text-zinc-600 transition-all duration-300">
+                        <svg id="fingerprint-icon" class="w-14 h-14 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M12 11c0-.797.19-1.55.53-2.216A6.002 6.002 0 006 13c0 2.21.785 4.238 2.091 5.823M12 11c.012-.033.024-.066.037-.1M12 11v10M12 11c-.012-.033-.024-.066-.037-.1m1.557-2.916A5.986 5.986 0 0112 7c-.643 0-1.258.101-1.834.288M12 7a6 6 0 016 6c0 1.345-.443 2.585-1.192 3.585M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="bg-[#09090b] border border-[#27272a] rounded-lg p-3 text-center">
+                        <span class="text-[10px] text-[#71717a] font-mono uppercase tracking-wide">Modo de Autenticação</span>
+                        <p id="instruction-text" class="text-sm font-medium text-[#e4e4e7] mt-1 transition-colors duration-200">Aproxime a Face ou Digital</p>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="pt-2">
+                <button id="btn-trigger" onclick="executarBatidaPonto()" class="w-full py-3 px-4 bg-[#27272a] hover:bg-[#3f3f46] active:bg-zinc-700 text-[#f4f4f5] border border-[#3f3f46] rounded-xl font-medium text-xs tracking-wider uppercase transition-all duration-150 font-mono shadow-md focus:outline-none">
+                    Simular Batida de Ponto
+                </button>
+            </footer>
+
+        </div>
+
+        <div id="screen-success" class="hidden flex-1 flex flex-col justify-between p-6">
+            
+            <header class="text-center pt-4 space-y-3">
+                <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-[#064e3b]/40 border border-[#064e3b] text-[#10b981]">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <div class="space-y-1">
+                    <h2 class="text-base font-semibold tracking-wide text-[#10b981] uppercase font-mono">Ponto Registrado</h2>
+                    <p class="text-xs text-[#a1a1aa]">Comprovante assinado e armazenado</p>
+                </div>
+            </header>
+
+            <div class="flex-1 flex flex-col justify-center my-4">
+                <div class="bg-[#09090b] border border-[#27272a] rounded-xl p-4 font-mono text-xs space-y-3 text-[#d4d4d8]">
+                    
+                    <div>
+                        <span class="text-[#71717a] text-[10px] block uppercase tracking-wider">Colaborador</span>
+                        <span class="text-sm font-bold text-white tracking-wide">EXEMPLO</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#18181b]">
+                        <div>
+                            <span class="text-[#71717a] text-[10px] block uppercase">Registro</span>
+                            <span class="text-white font-medium">RE: 1024-5</span>
+                        </div>
+                        <div>
+                            <span class="text-[#71717a] text-[10px] block uppercase">Vínculo</span>
+                            <span class="text-white">TURNO A</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#18181b]">
+                        <div>
+                            <span class="text-[#71717a] text-[10px] block uppercase">Data</span>
+                            <span id="receipt-date" class="text-white">--/--/----</span>
+                        </div>
+                        <div>
+                            <span class="text-[#71717a] text-[10px] block uppercase">Horário</span>
+                            <span id="receipt-time" class="text-white">--:--:--</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-[#18181b] flex justify-between items-center text-[11px]">
+                        <span class="text-[#71717a]">BANCO DE HORAS:</span>
+                        <span class="text-[#e4e4e7] font-medium">+12h 45m</span>
+                    </div>
+
+                    <div class="pt-2 border-t border-[#18181b] flex justify-between items-center text-[10px]">
+                        <span class="text-[#71717a]">AUTENTICAÇÃO:</span>
+                        <span class="text-[#10b981] font-bold bg-[#064e3b]/20 px-1.5 py-0.5 rounded border border-[#064e3b]/40">NUVEM ATIVA</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <footer class="space-y-3 text-center">
+                <div id="countdown-text" class="text-[11px] font-mono text-[#71717a]">
+                    Fechando em <span id="countdown-timer" class="text-[#f4f4f5] font-medium">5</span>s...
+                </div>
+                <button onclick="forçarReset()" class="w-full py-2 px-4 bg-transparent hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 font-mono text-[11px] tracking-wider uppercase transition-colors rounded-lg">
+                    [ Voltar Manualmente ]
+                </button>
+            </footer>
+
+        </div>
+
+    </div>
+
+    <div class="w-full max-w-sm mt-4 p-3 bg-[#18181b] border border-[#27272a] rounded-xl text-center">
+        <p class="text-[10px] font-mono text-[#52525b] uppercase tracking-widest">Controles do Protótipo Metalsider V2</p>
+    </div>
+
+    <script>
+        let timerInterval = null;
+
+        // Atualização Contínua do Relógio Oficial
+        function iniciarRelogio() {
+            const liveClock = document.getElementById('live-clock');
+            const liveDate = document.getElementById('live-date');
+            
+            function atualizar() {
+                const agora = new Date();
+                
+                // Formatação da Data (EX: SEX, 29 MAI 2026)
+                const opcoesData = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
+                let dataString = agora.toLocaleDateString('pt-BR', opcoesData).toUpperCase();
+                dataString = dataString.replace('.', ''); // Remove pontos de abreviação
+                
+                // Formatação do Horário
+                const horaString = agora.toTimeString().split(' ')[0];
+
+                liveClock.textContent = horaString;
+                liveDate.textContent = dataString;
+            }
+            setInterval(atualizar, 1000);
+            atualizar();
+        }
+
+        // Simulação do Atraso de Leitura de Hardware (1.2 Segundos)
+        function ejecutarBatidaPonto() {
+            const btn = document.getElementById('btn-trigger');
+            const wrapper = document.getElementById('biometric-wrapper');
+            const text = document.getElementById('instruction-text');
+
+            // Bloqueia interações repetidas (Prevenção de Duplo Clique)
+            btn.disabled = true;
+            btn.classList.add('opacity-40', 'cursor-not-allowed');
+
+            // Altera interface para o Estado de Processamento solicitado
+            text.textContent = 'LENDO DIGITAL / PROCESSANDO...';
+            text.classList.remove('text-[#e4e4e7]');
+            text.classList.add('text-amber-500', 'font-bold');
+            
+            wrapper.classList.remove('border-zinc-800', 'text-zinc-600');
+            wrapper.classList.add('border-amber-500/50', 'text-amber-500', 'shadow-[0_0_15px_rgba(245,158,11,0.1)]');
+
+            // Segura o fluxo por exatos 1.2 segundos (1200ms)
+            setTimeout(() => {
+                const agora = new Date();
+                const horaFinal = agora.toTimeString().split(' ')[0];
+                
+                const opcoesData = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
+                let dataFinal = agora.toLocaleDateString('pt-BR', opcoesData).toUpperCase().replace('.', '');
+
+                // Registra o momento exato no recibo estruturado
+                document.getElementById('receipt-time').textContent = horaFinal;
+                document.getElementById('receipt-date').textContent = dataFinal;
+
+                // Altera as telas (Esconde Tela 1 e exibe Tela 2)
+                document.getElementById('screen-ready').classList.add('hidden');
+                document.getElementById('screen-success').classList.remove('hidden');
+
+                // Inicia o contador regressivo automático para resetar a tela
+                iniciarContadorRegressivo(5);
+            }, 1200);
+        }
+
+        // Fluxo de Fechamento / Reset Automático
+        function iniciarContadorRegressivo(segundos) {
+            const display = document.getElementById('countdown-timer');
+            let restante = segundos;
+            display.textContent = restante;
+
+            timerInterval = setInterval(() => {
+                restante--;
+                display.textContent = restante;
+
+                if (restante <= 0) {
+                    forçarReset();
+                }
+            }, 1000);
+        }
+
+        // Restaura o estado inicial do sistema de forma limpa
+        function forçarReset() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            // Restaura elementos de feedback da Tela 1
+            const btn = document.getElementById('btn-trigger');
+            const wrapper = document.getElementById('biometric-wrapper');
+            const text = document.getElementById('instruction-text');
+
+            btn.disabled = false;
+            btn.classList.remove('opacity-40', 'cursor-not-allowed');
+
+            text.textContent = 'Aproxime a Face ou Digital';
+            text.classList.remove('text-amber-500', 'font-bold');
+            text.classList.add('text-[#e4e4e7]');
+
+            wrapper.classList.remove('border-amber-500/50', 'text-amber-500', 'shadow-[0_0_15px_rgba(245,158,11,0.1)]');
+            wrapper.classList.add('border-zinc-800', 'text-zinc-600');
+
+            // Alterna visibilidade
+            document.getElementById('screen-success').classList.add('hidden');
+            document.getElementById('screen-ready').classList.remove('hidden');
+        }
+
+        // Inicialização do script ao carregar a página
+        window.onload = iniciarRelogio;
+    </script>
+</body>
+</html>
